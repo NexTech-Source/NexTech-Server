@@ -1,17 +1,26 @@
 {
-  "name": "serverless",
+  "name": "nextechserver",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "serverless --aws-profile default"
   },
+  "keywords": [
+    "serverless",
+    "jwt"
+  ],
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dynamodb-toolbox": "0.1.0",
+    "jsonwebtoken": "^8.5.1",
     "next": "12.2.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "8.21.0",

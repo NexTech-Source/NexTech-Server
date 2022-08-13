@@ -1,0 +1,55 @@
+serverless:
+  component: "@sls-next/serverless-component@latest"
+
+
+  org: tmaximini
+
+custom:
+  secrets: ${file(secrets.json)}
+  tableName: "users-table"
+
+service: serverless-jwt-authorizer
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  environment:
+    JWT_SECRET: ${self:custom.secrets.JWT_SECRET}
+    AWS_ID: ${self:custom.secrets.AWS_ID}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+      Resource: "arn:aws:dynamodb:eu-central-1:${self:custom.secrets.AWS_ID}:table/${self:custom.tableName}"
+functions:
+
+  login:
+    handler: pages/api/login.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+  register:
+    handler: pages/api/reg.handler
+    events:
+      - http:
+          path: register
+          method: post
+          cors: true
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
