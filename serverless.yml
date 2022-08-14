@@ -6,13 +6,14 @@ serverless:
 
 custom:
   secrets: ${file(secrets.json)}
-  tableName: "users-table"
+  tableName: "users-table-new-2"
 
 service: serverless-jwt-authorizer
 provider:
   name: aws
   runtime: nodejs12.x
   region: us-east-1
+  versionFunctions: false
   environment:
     JWT_SECRET: ${self:custom.secrets.JWT_SECRET}
     AWS_ID: ${self:custom.secrets.AWS_ID}
@@ -21,9 +22,8 @@ provider:
       Action:
         - "dynamodb:GetItem"
         - "dynamodb:PutItem"
-      Resource: "arn:aws:dynamodb:eu-central-1:${self:custom.secrets.AWS_ID}:table/${self:custom.tableName}"
+      Resource: "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.tableName}"
 functions:
-
   login:
     handler: pages/api/login.handler
     events:
