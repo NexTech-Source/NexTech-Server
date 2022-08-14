@@ -1,9 +1,6 @@
 serverless:
   component: "@sls-next/serverless-component@latest"
 
-
-  org: tmaximini
-
 custom:
   secrets: ${file(secrets.json)}
   tableName: "users-table-new-2"
