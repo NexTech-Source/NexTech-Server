@@ -6,36 +6,37 @@ module.exports.handler = async function signInUser(event) {
         body = JSON.parse(event.body);
     } catch (err) {
         return {
-            "cookies": [],
-            "isBase64Encoded": false,
-            "statusCode": 400,
-            "headers": {
+
+            isBase64Encoded: false,
+            statusCode: 400,
+            headers: {
                 "Content-Type ": "application/json"
             },
-            "body": { "message": "Invalid JSON" }
+            "body": JSON.stringify({ "message": "Invalid JSON" })
         };
     }
 
     return login(body)
         .then(session => ({
-            "cookies": [],
-            "isBase64Encoded": false,
-            "statusCode": 200,
-            "headers": {
+            isBase64Encoded: false,
+            statusCode: 200,
+            headers: {
                 "Content-Type ": "application/json"
             },
-            "body": JSON.stringify(session)
+            body: JSON.stringify(session)
         }))
         .catch(err => {
             console.log({ err });
             return {
-                "cookies": [],
-                "isBase64Encoded": false,
-                "statusCode": err.statusCode || 500,
-                "headers": {
+
+                isBase64Encoded: false,
+                statusCode: err.statusCode || 500,
+                headers: {
                     "Content-Type ": "application/json"
                 },
-                "body": { "message": err.message }
+                body: JSON.stringify({
+                    "message ": err.message
+                })
             };
         });
 
