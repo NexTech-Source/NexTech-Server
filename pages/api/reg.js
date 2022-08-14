@@ -1,5 +1,4 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
 const { createDbUser } = require("../lib/db");
 
 module.exports.handler = async function registerUser(event) {
@@ -8,7 +7,6 @@ module.exports.handler = async function registerUser(event) {
         body = JSON.parse(event.body);
     } catch (err) {
         return {
-
             isBase64Encoded: false,
             statusCode: 400,
             headers: {
