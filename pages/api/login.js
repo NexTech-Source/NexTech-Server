@@ -1,5 +1,5 @@
 const { login } = require("../lib/utils");
-
+//TODO: https://dev.to/mabaranowski/nextjs-authentication-jwt-refresh-token-rotation-with-nextauthjs-5696
 module.exports.handler = async function signInUser(event) {
     var body = {};
     try {

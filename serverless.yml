@@ -3,7 +3,8 @@ serverless:
 
 custom:
   secrets: ${file(secrets.json)}
-  tableName: "users-table-new-2"
+  usertableName: "users-table-new-2"
+  logtableName: "log-table"
 
 service: serverless-jwt-authorizer
 provider:
@@ -19,7 +20,9 @@ provider:
       Action:
         - "dynamodb:GetItem"
         - "dynamodb:PutItem"
-      Resource: "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.tableName}"
+      Resource: 
+        - "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.usertableName}"
+        - "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.logtableName}"
 functions:
   login:
     handler: pages/api/login.handler
@@ -35,12 +38,34 @@ functions:
           path: register
           method: post
           cors: true
+  docupload:
+    handler: pages/api/docupload.handler
+    events:
+      - http:
+          path: docupload
+          method: post
+          cors: true
+  authorize:
+    handler: pages/api/authorize.handler
+    events:
+      - http:
+          path: authorize
+          method: post
+          cors: true
+    
+  dummyportal:
+    handler: pages/api/dummyportal.handler
+    events:
+      - http:
+          path: dummyportal
+          method: post
+          cors: true
 resources:
   Resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.tableName}
+        TableName: ${self:custom.usertableName}
         AttributeDefinitions:
           - AttributeName: pk
             AttributeType: S
@@ -50,3 +75,18 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    logsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.logtableName}
+        AttributeDefinitions:
+          - AttributeName: tid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    

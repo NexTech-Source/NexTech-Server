@@ -5,7 +5,8 @@ const { getUserByEmail } = require("../lib/db");
 async function signToken(user) {
     const secret = Buffer.from(process.env.JWT_SECRET, "base64");
 
-    return jwt.sign({ email: user.email, id: user.id }, secret, {
+    return await jwt.sign({ email: user.email, id: user.id, }, secret, {
+        // generates error if algorithm is switched -> "Error: error:0909006C:PEM routines:get_name:no start line"
         expiresIn: 86400 // expires in 24 hours
     });
 }

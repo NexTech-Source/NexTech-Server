@@ -24,6 +24,48 @@ const User = new Entity({
 })
 
 
+const LogTable = new Table({
+    name: 'log-table',
+    partitionKey: "pk",
+    DocumentClient: DocumentClient
+});
+
+const Record = new Entity({
+    name: 'Record',
+    attributes: {
+        tid: { type: "string", partitionKey: true }, //transaction id
+        email: { type: "string" },
+        numberOfPages: { type: "number" },
+        status: { type: "string" },
+        createdAt: { type: "string" }
+    },
+    table: LogTable
+});
+
+const updateRecordStatus = async(tid, status) => {
+    const response = await Record.update({ tid: tid, status: status });
+    return Record.parse(response);
+}
+
+const putRecordtoDb = async props => {
+    const { tid, email, numberOfPages, status } = props;
+
+    const record = {
+        tid: tid,
+        email: email,
+        numberofPages: numberOfPages,
+        status: status,
+        createdAt: new Date()
+    };
+    const response = await Record.put(record);
+    return Record.parse(response);
+}
+
+const pollOnDbRecord = async tid => {
+    const response = await Record.get({ tid });
+    return Record.parse(response);
+}
+
 const createDbUser = async props => {
     const passwordHash = await bcrypt.hash(props.password, 8); // hash the pass
     delete props.password; // don't save it in clear text
@@ -41,8 +83,6 @@ const createDbUser = async props => {
     });
 
     console.log("create user with params", response);
-
-
     return User.parse(response);
 };
 
