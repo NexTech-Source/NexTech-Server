@@ -1,18 +1,20 @@
-#Welcome to the NexTech Server!
+# Welcome to the NexTech Server!
+
+
 [sys-arch-diagram] (SIH SysArch 2.3.png)
 
 
-##Please Note:
+## Please Note:
 You cannot (re) deploy this without the Keys which are not Obviously posted on Github. 
 
-##Completed: 
+## Completed: 
 - System Architecture
 - DocUpload Lambda, Image Processing Lambda , Dummy Portal Lambda
 - Error Handling codes for register,login 
 - poller 
 
 
-##TODOS: (Priority : Top Down)
+## TODOS: (Priority : Top Down)
 - bump to stronger authentication with ES256 (Elliptic Curve Digital Signature Algorithm)
 - Update with actual image decoded files (once aryan is done with img processing code)
 - Integration Testing
