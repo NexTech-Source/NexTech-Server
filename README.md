@@ -1,7 +1,7 @@
 # Welcome to the NexTech Server!
 
 
-![sys-arch-diagram](sihsysarch.png)
+![sys-arch-diagram](sihsysarch1.png)
 
 
 ## Please Note:
