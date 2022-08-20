@@ -6,7 +6,6 @@ module.exports.handler = async function signInUser(event) {
         body = JSON.parse(event.body);
     } catch (err) {
         return {
-
             isBase64Encoded: false,
             statusCode: 400,
             headers: {

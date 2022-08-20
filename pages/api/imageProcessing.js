@@ -1,44 +1,81 @@
 const { updateRecordStatus } = require("../lib/db");
 const https = require('https');
-module.exports.handler = async function imageProcess(event) {
-    const { tid } = event;
-    //const {images } = event ; // the images will come from the event in base 64 encoded format
-
-    /*
-            The image processing code goes here
-    */
 
 
+function postRequest(body) {
     const options = {
-        hostname: 'https://wh31lknrql.execute-api.us-east-1.amazonaws.com/dev/dummyportal',
-        path: '/dummyportal',
+        hostname: 'wh31lknrql.execute-api.us-east-1.amazonaws.com',
+        path: '/dev/dummyportal',
         method: 'POST',
+        port: 443,
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            images: ['base64 image1', 'base64 image2'], //put the image outputs here in base 64 encoded format
-        })
     };
 
-    const req = await https.request(options, async res => {
-        if (res.statusCode == 200) {
+    return new Promise((resolve, reject) => {
+        const req = https.request(options, res => {
+            let rawData = '';
+
+            res.on('data', chunk => {
+                rawData += chunk;
+            });
+
+            res.on('end', () => {
+                try {
+                    console.log(rawData);
+                    resolve(JSON.parse(rawData));
+                } catch (err) {
+                    reject(new Error(err));
+                }
+            });
+        });
+
+        req.on('error', err => {
+            reject(new Error(err));
+        });
+        req.write(JSON.stringify(body));
+        req.end();
+    });
+}
+
+
+
+module.exports.handler = async function imageProcessing(event) {
+    const { tid } = event;
+    //const {images } = event ; // the images will come from the event in base 64 encoded format
+    /*
+            The image processing code goes here
+    */
+    try {
+        const resp = await postRequest({
+            images: ["image1", "image2"] // the images will come from the event in base 64 encoded format]
+        });
+        console.log("resp from dummy portal" + JSON.stringify(resp));
+        if (resp.statusCode == 200) {
             await updateRecordStatus(tid, "green");
             return {
                 statusCode: 200,
                 headers: {},
                 body: JSON.stringify("Successfully uploaded to end portal")
             };
-
         } else {
+            console.log("StatusCode response" + resp.statusCode);
             await updateRecordStatus(tid, "red");
             return {
-                statusCode: 200,
+                statusCode: 400,
                 headers: {},
-                body: JSON.stringify("Doc upload failed")
+                body: JSON.stringify("Failed to upload to end portal")
             };
         }
-    });
+    } catch (err) {
+        console.log('Error is: 👉️', err);
+        return {
+            statusCode: 400,
+            body: err.message,
+        };
+    }
+
 
 
 

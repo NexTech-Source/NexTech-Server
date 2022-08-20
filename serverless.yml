@@ -4,7 +4,8 @@ serverless:
 custom:
   secrets: ${file(secrets.json)}
   usertableName: "users-table-new-2"
-  logtableName: "log-table"
+  logtableName: "logs-table"
+  historyTableName: "history-table"
 
 service: serverless-jwt-authorizer
 provider:
@@ -20,9 +21,14 @@ provider:
       Action:
         - "dynamodb:GetItem"
         - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+        - "lambda:InvokeFunction"
       Resource: 
         - "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.usertableName}"
         - "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.logtableName}"
+        - "arn:aws:dynamodb:us-east-1:${self:custom.secrets.AWS_ID}:table/${self:custom.historyTableName}"
+        - "arn:aws:lambda:us-east-1:*:*"
 functions:
   login:
     handler: pages/api/login.handler
@@ -52,12 +58,25 @@ functions:
           path: authorize
           method: post
           cors: true
-    
   dummyportal:
     handler: pages/api/dummyportal.handler
     events:
       - http:
           path: dummyportal
+          method: post
+          cors: true
+  imageProcessing:
+    handler : pages/api/imageProcessing.handler
+    events:
+      - http:
+          path: imageProcessing
+          method: post
+          cors: true
+  pollDB:
+    handler : pages/api/poll.handler
+    events:
+      - http:
+          path: pollDB
           method: post
           cors: true
 resources:
@@ -80,10 +99,23 @@ resources:
       Properties:
         TableName: ${self:custom.logtableName}
         AttributeDefinitions:
-          - AttributeName: tid
+          - AttributeName: pk
             AttributeType: S
         KeySchema:
-          - AttributeName: tid
+          - AttributeName: pk
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    historyTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.historyTableName}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

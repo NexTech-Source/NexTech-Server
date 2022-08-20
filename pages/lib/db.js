@@ -25,10 +25,29 @@ const User = new Entity({
 
 
 const LogTable = new Table({
-    name: 'log-table',
+    name: 'logs-table',
     partitionKey: "pk",
     DocumentClient: DocumentClient
 });
+
+const historyTable = new Table({
+    name: 'history-table',
+    partitionKey: "pk",
+    DocumentClient: DocumentClient
+});
+
+const HistoryRecord = new Entity({
+    name: 'HistoryRecord',
+    attributes: {
+        tid: { type: "string", partitionKey: true }, //transaction id
+        email: { type: "string" },
+        numberOfPages: { type: "number" },
+        status: { type: "string" },
+        createdAt: { type: "string" }
+    },
+    table: historyTable
+});
+
 
 const Record = new Entity({
     name: 'Record',
@@ -42,22 +61,51 @@ const Record = new Entity({
     table: LogTable
 });
 
+const shiftRecordtoHistory = async(tid) => {
+    const record = await Record.get({ tid: tid });
+    // promise to delete the record from the logs table
+    const histRec = HistoryRecord.parse(record);
+    console.log("histRec : ", histRec);
+    await HistoryRecord.put(histRec)
+        .then(
+            async(onResolved) => {
+                console.log("record added to history table");
+                await Record.delete({ tid: tid });
+            }
+        )
+        .catch(err => {
+            console.log("error in shifting record to history", err);
+        });
+}
+
 const updateRecordStatus = async(tid, status) => {
     const response = await Record.update({ tid: tid, status: status });
     return Record.parse(response);
 }
 
 const putRecordtoDb = async props => {
+    console.log(props);
     const { tid, email, numberOfPages, status } = props;
+    console.log("TID" +
+        tid)
 
     const record = {
         tid: tid,
         email: email,
-        numberofPages: numberOfPages,
+        numberOfPages: numberOfPages,
         status: status,
         createdAt: new Date()
     };
-    const response = await Record.put(record);
+    console.log("record tid" + record.tid);
+
+    const response = await Record.put({
+        tid: record.tid,
+        email: email,
+        numberOfPages: numberOfPages,
+        status: status,
+        createdAt: new Date()
+    });
+    console.log("put record with resp", response);
     return Record.parse(response);
 }
 
@@ -96,5 +144,9 @@ const getUserByEmail = async email => {
 
 module.exports = {
     createDbUser,
-    getUserByEmail
+    getUserByEmail,
+    updateRecordStatus,
+    putRecordtoDb,
+    pollOnDbRecord,
+    shiftRecordtoHistory
 };

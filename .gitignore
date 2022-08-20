@@ -19,6 +19,8 @@ secrets.json
 # misc
 .DS_Store
 *.pem
+*.key
+*.pub
 
 # debug
 npm-debug.log*

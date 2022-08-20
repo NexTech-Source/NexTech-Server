@@ -1,18 +1,23 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { getUserByEmail } = require("../lib/db");
-
+var fs = require('fs');
 async function signToken(user) {
-    const secret = Buffer.from(process.env.JWT_SECRET, "base64");
 
+
+    var cert_priv = fs.readFileSync(process.cwd() + '/jwtES256.key');
+    //const cert_priv = process.env.JWT_PRIV_KEY;
+    const secret = Buffer.from(process.env.JWT_SECRET, "base64");
     return await jwt.sign({ email: user.email, id: user.id, }, secret, {
-        // generates error if algorithm is switched -> "Error: error:0909006C:PEM routines:get_name:no start line"
+        //algorithm: 'ES256', // generates error if algorithm is switched -> "Error: error:0909006C:PEM routines:get_name:no start line"
         expiresIn: 86400 // expires in 24 hours
     });
 }
 
 async function getUserFromToken(token) {
+    //var cert_pub = fs.readFileSync(process.cwd() + '/jwtES256.pub.key');
     const secret = Buffer.from(process.env.JWT_SECRET, "base64");
+    //const cert_pub = process.env.JWT_PUB_KEY;
     const decoded = jwt.verify(token.replace("Bearer ", ""), secret);
     return decoded;
 }
