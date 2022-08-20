@@ -1,7 +1,7 @@
 # Welcome to the NexTech Server!
 
 
-[sys-arch-diagram] (SIH SysArch 2.3.png)
+[ sys-arch-diagram ] (https://github.com/NexTech-Source/NexTech-Server/blob/main/SIH%20SysArch%202.3.png)
 
 
 ## Please Note:
