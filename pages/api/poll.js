@@ -1,7 +1,7 @@
 const { pollOnDbRecord, shiftRecordtoHistory } = require('../lib/db');
 const { getUserFromToken } = require('../lib/utils');
 module.exports.handler = async function pollJS(event) {
-    const userObj = await getUserFromToken(event.headers.authToken);
+    const userObj = await getUserFromToken(event.headers.authtoken);
     const { tid } = JSON.parse(event.body);
     const dbRecord = await pollOnDbRecord(tid);
     if (dbRecord.status == "yellow") {

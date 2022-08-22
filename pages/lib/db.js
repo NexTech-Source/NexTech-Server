@@ -25,13 +25,13 @@ const User = new Entity({
 
 
 const LogTable = new Table({
-    name: 'logs-table',
+    name: 'active-table',
     partitionKey: "pk",
     DocumentClient: DocumentClient
 });
 
 const historyTable = new Table({
-    name: 'history-table',
+    name: 'history-table-2',
     partitionKey: "pk",
     DocumentClient: DocumentClient
 });
@@ -43,7 +43,8 @@ const HistoryRecord = new Entity({
         email: { type: "string" },
         numberOfPages: { type: "number" },
         status: { type: "string" },
-        createdAt: { type: "string" }
+        createdAt: { type: "string" },
+        docName: { type: "string" }
     },
     table: historyTable
 });
@@ -56,7 +57,8 @@ const Record = new Entity({
         email: { type: "string" },
         numberOfPages: { type: "number" },
         status: { type: "string" },
-        createdAt: { type: "string" }
+        createdAt: { type: "string" },
+        docName: { type: "string" }
     },
     table: LogTable
 });
@@ -85,7 +87,7 @@ const updateRecordStatus = async(tid, status) => {
 
 const putRecordtoDb = async props => {
     console.log(props);
-    const { tid, email, numberOfPages, status } = props;
+    const { tid, email, numberOfPages, status, docName } = props;
     console.log("TID" +
         tid)
 
@@ -94,6 +96,7 @@ const putRecordtoDb = async props => {
         email: email,
         numberOfPages: numberOfPages,
         status: status,
+        docName: docName,
         createdAt: new Date()
     };
     console.log("record tid" + record.tid);
@@ -103,6 +106,7 @@ const putRecordtoDb = async props => {
         email: email,
         numberOfPages: numberOfPages,
         status: status,
+        docName: docName,
         createdAt: new Date()
     });
     console.log("put record with resp", response);

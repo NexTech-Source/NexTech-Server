@@ -42,13 +42,14 @@ function postRequest(body) {
 
 
 module.exports.handler = async function imageProcessing(event) {
-    const { tid } = event;
+    const { tid, email } = event;
     //const {images } = event ; // the images will come from the event in base 64 encoded format
     /*
             The image processing code goes here
     */
     try {
         const resp = await postRequest({
+            email: email,
             images: ["image1", "image2"] // the images will come from the event in base 64 encoded format]
         });
         console.log("resp from dummy portal" + JSON.stringify(resp));

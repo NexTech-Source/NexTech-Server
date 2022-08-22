@@ -4,8 +4,8 @@ serverless:
 custom:
   secrets: ${file(secrets.json)}
   usertableName: "users-table-new-2"
-  logtableName: "logs-table"
-  historyTableName: "history-table"
+  logtableName: "active-table"
+  historyTableName: "history-table-2"
 
 service: serverless-jwt-authorizer
 provider:
