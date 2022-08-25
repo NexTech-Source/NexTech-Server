@@ -43,10 +43,8 @@ function postRequest(body) {
 
 module.exports.handler = async function imageProcessing(event) {
     const { tid, email } = event;
-    //const {images } = event ; // the images will come from the event in base 64 encoded format
-    /*
-            The image processing code goes here
-    */
+    const { images } = event; // the images will come from the event in base 64 encoded format
+
     try {
         const resp = await postRequest({
             email: email,
