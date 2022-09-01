@@ -1,6 +1,6 @@
 const { updateRecordStatus } = require("../lib/db");
 const https = require('https');
-
+const AWS = require("aws-sdk");
 
 function postRequest(body) {
     const options = {
@@ -46,9 +46,30 @@ module.exports.handler = async function imageProcessing(event) {
     const { images } = event; // the images will come from the event in base 64 encoded format
 
     try {
+        console.log(images);
+        const payload = {
+            images: images,
+        }
+        console.log("reached here 1")
+        var lambda = new AWS.Lambda();
+
+        var params = {
+
+            FunctionName: 'imageProcessingFirst',
+            Payload: JSON.stringify(payload),
+            InvocationType: 'RequestResponse',
+        };
+        console.log("reached here 2")
+        const procjson = await lambda.invoke(params // successful response
+        ).promise();
+        console.log("process complete")
+        const processedImages = JSON.stringify(procjson);
+        console.log("resp from lambda py image processing : " + processedImages);
+
+
         const resp = await postRequest({
             email: email,
-            images: ["image1", "image2"] // the images will come from the event in base 64 encoded format]
+            images: processedImages // the images will come from the event in base 64 encoded format]
         });
         console.log("resp from dummy portal" + JSON.stringify(resp));
         if (resp.statusCode == 200) {

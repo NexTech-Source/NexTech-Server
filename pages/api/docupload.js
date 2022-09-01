@@ -8,7 +8,8 @@ const { v4: uuidv4 } = require("uuid");
 
 module.exports.handler = async function(event) {
     try {
-
+        console.log(event);
+        console.log(JSON.stringify(event));
         const userObj = await getUserFromToken(event.headers.authtoken);
 
         const { email, numberOfPages, images, docName } = JSON.parse(event.body);
@@ -30,8 +31,9 @@ module.exports.handler = async function(event) {
             status: "yellow",
             docName: docName,
         });
+        console.log("reached here 100");
 
-        /*invoking async lambda */
+        /*invoking lambda */
         const payload = {
             tid: tid4,
             email: email,
