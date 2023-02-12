@@ -1,7 +1,7 @@
 # Welcome to the NexTech Server!
 
 
-![sys-arch-diagram](sihsysarc2.png )
+![sihsysarc2](https://user-images.githubusercontent.com/76046349/218316203-c6670d39-b57d-4302-a387-5c25f8f10cbd.png)
 
 
 ## Please Note:
